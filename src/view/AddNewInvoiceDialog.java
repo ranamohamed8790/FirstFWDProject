@@ -3,7 +3,7 @@ package view;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class NewInvoiceDialog extends javax.swing.JDialog {
+public class AddNewInvoiceDialog extends javax.swing.JDialog {
     private javax.swing.JButton addBtn;
     private javax.swing.JButton cancelBtn;
     private javax.swing.JTextField customerNameTxtField;
@@ -12,7 +12,7 @@ public class NewInvoiceDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    public NewInvoiceDialog(java.awt.Frame parent, boolean modal) {
+    public AddNewInvoiceDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
 
         initComponents();

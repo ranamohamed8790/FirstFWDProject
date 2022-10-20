@@ -1,6 +1,6 @@
 package model;
 
-public class InvoiceLines {
+public class LineTable {
 
     // == Fields ==
     private HeaderTable invoice;
@@ -9,7 +9,7 @@ public class InvoiceLines {
     private int count;
 
     // == Constructors ==
-    public InvoiceLines(HeaderTable invoice, String itemName, double itemPrice, int count) {
+    public LineTable(HeaderTable invoice, String itemName, double itemPrice, int count) {
         this.invoice = invoice;
         this.itemName = itemName;
         this.itemPrice = itemPrice;
@@ -52,7 +52,8 @@ public class InvoiceLines {
     // == toString method ==
     @Override
     public String toString() {
-        return "\t" + "InvoiceLine{itemName=" + itemName + ", itemPrice=" + itemPrice + ", count=" + count + "}\n\t";
+        return "\t" + "InvoiceLine{itemName=" + itemName + ", itemPrice="
+                + itemPrice + ", count=" + count + "}\n\t";
     }
 
 }

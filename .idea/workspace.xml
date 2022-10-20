@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="6579e058-3e42-4db7-b15f-da5885100fe9" name="Changes" comment="" />
+    <list default="true" id="6579e058-3e42-4db7-b15f-da5885100fe9" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ConsoleOutputScreenShot/AfterAddInvoice.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ConsoleOutputScreenShot/BeforeSubmitNewImvoice.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/invoices/InvoiceHeader.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/invoices/InvoiceLine.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/ButtonAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/ButtonAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/MouseAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/MouseAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/HeaderTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/HeaderTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/LineTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/LineTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/AddNewInvoiceDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/AddNewInvoiceDialog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/SigInvoiceFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/SigInvoiceFrame.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2GPka6usFk4Pv1c8kvUKGLLaizE" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -16,9 +44,33 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last_opened_file_path": "D:/Udacity-Fwd-Projects/FirstFwdProject"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="SigInvoiceFrame" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="19" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="view.SigInvoiceFrame" />
+      <module name="FirstFwdProject" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="view.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.SigInvoiceFrame" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

@@ -1,8 +1,9 @@
 package controller;
 
-import model.InvoiceHeader;
-import model.InvoiceLines;
-import view.InvoiceFrame;
+import model.HeaderTable;
+import model.LineTable;
+import view.SigInvoiceFrame;
+
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -10,35 +11,35 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 
-public class MouseHandler extends MouseAdapter {
+public class MouseAction extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        int selectedInvoice = InvoiceFrame.invoicesTable.getSelectedRow() + 1;
-        ArrayList<InvoiceLines> invoiceItems;
-        for (InvoiceHeader invoice : InvoiceFrame.invoices) {
+        int selectedInvoice = SigInvoiceFrame.invoicesTable.getSelectedRow() + 1;
+        ArrayList<LineTable> invoiceItems;
+        for (HeaderTable invoice : SigInvoiceFrame.invoices) {
             if (invoice.getInvoiceNum() == selectedInvoice) {
 
-                InvoiceFrame.invoiceNumLbl.setText(String.valueOf(invoice.getInvoiceNum()));
-                InvoiceFrame.invoiceDateTxtField.setText(sdf.format(invoice.getInvoiceDate()));
-                InvoiceFrame.customerNameTxtField.setText(invoice.getCustomerName());
+                SigInvoiceFrame.invoiceNumLbl.setText(String.valueOf(invoice.getInvoiceNum()));
+                SigInvoiceFrame.invoiceDateTxtField.setText(sdf.format(invoice.getInvoiceDate()));
+                SigInvoiceFrame.customerNameTxtField.setText(invoice.getCustomerName());
                 double total = 0.0;
                 if (invoice.getInvoiceLines() != null) {
-                    for (InvoiceLines item : invoice.getInvoiceLines()) {
+                    for (LineTable item : invoice.getInvoiceLines()) {
                         total += item.getItemPrice() * item.getCount();
                     }
 
-                    InvoiceFrame.invoiceTotalLbl.setText(String.valueOf(total));
+                    SigInvoiceFrame.invoiceTotalLbl.setText(String.valueOf(total));
                     invoiceItems = invoice.getInvoiceLines();
                     Object[][] table2Data = getInvoiceItemsTableData(invoiceItems);
-                    InvoiceFrame.itemsTable.setModel(new DefaultTableModel(table2Data,
+                    SigInvoiceFrame.itemsTable.setModel(new DefaultTableModel(table2Data,
                             new String[]{"No.", "Item Name", "Item Price", "Count", "Item Total"}));
                 } else {
-                    InvoiceFrame.invoiceTotalLbl.setText(String.valueOf(total));
+                    SigInvoiceFrame.invoiceTotalLbl.setText(String.valueOf(total));
 
-                    InvoiceFrame.itemsTable.setModel(new javax.swing.table.DefaultTableModel(
+                    SigInvoiceFrame.itemsTable.setModel(new javax.swing.table.DefaultTableModel(
                             new Object[][]{
 
                             },
@@ -47,7 +48,7 @@ public class MouseHandler extends MouseAdapter {
                             }
                     ));
 
-                    InvoiceFrame.itemsTable.setModel(new DefaultTableModel(new Object[][]{},
+                    SigInvoiceFrame.itemsTable.setModel(new DefaultTableModel(new Object[][]{},
                             new String[]{"No.", "Item Name", "Item Price", "Count", "Item Total"}));
 
                 }
@@ -57,7 +58,7 @@ public class MouseHandler extends MouseAdapter {
     }
 
     // Helper Method
-    private Object[][] getInvoiceItemsTableData(ArrayList<InvoiceLines> items) {
+    private Object[][] getInvoiceItemsTableData(ArrayList<LineTable> items) {
 
         Object[][] tableData = new Object[items.size()][5];
         for (int i = 0; i < items.size(); i++) {

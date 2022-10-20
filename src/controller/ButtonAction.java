@@ -1,9 +1,9 @@
-package controler;
+package controller;
 
-import model.InvoiceHeader;
-import model.InvoiceLines;
-import view.InvoiceFrame;
-import view.NewInvoiceDialog;
+import model.HeaderTable;
+import model.LineTable;
+import view.SigInvoiceFrame;
+import view.AddNewInvoiceDialog;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
@@ -14,10 +14,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ActionHandler implements ActionListener {
+public class ButtonAction implements ActionListener {
 
     // == Fields ==
-    NewInvoiceDialog invoiceDialog;
+    AddNewInvoiceDialog invoiceDialog;
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -39,21 +39,21 @@ public class ActionHandler implements ActionListener {
 
     }
 
-    public static ArrayList<InvoiceHeader> readFile() {
-        ArrayList<InvoiceHeader> invoices = new ArrayList<>();
-        String invoiceHeaderFilePath = "resources\\InvoiceHeader.csv";
+    public static ArrayList<HeaderTable> readFile() {
+        ArrayList<HeaderTable> invoices = new ArrayList<>();
+        String invoiceHeaderFilePath = "resources\\HeaderTable.csv";
         String invoiceLineFilePath = "resources\\InvoiceLine.csv";
         BufferedReader reader = null;
         String line;
         try {
             reader = new BufferedReader(new FileReader(invoiceHeaderFilePath));
             while ((line = reader.readLine()) != null) {
-                InvoiceHeader invoice;
+                HeaderTable invoice;
                 String[] row = line.split(",");
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                 Date date = sdf.parse(row[1]);
-                invoice = new InvoiceHeader(Integer.parseInt(row[0]), date, row[2]);
-                ArrayList<InvoiceLines> invoiceItems = getItemsForInvoice(invoice, invoiceLineFilePath);
+                invoice = new HeaderTable(Integer.parseInt(row[0]), date, row[2]);
+                ArrayList<LineTable> invoiceItems = getItemsForInvoice(invoice, invoiceLineFilePath);
                 invoice.setInvoiceLines(invoiceItems);
                 invoices.add(invoice);
             }
@@ -75,20 +75,21 @@ public class ActionHandler implements ActionListener {
         return invoices;
     }
 
-    public static ArrayList<InvoiceHeader> readFile(String invoicesFilePath, String itemsFilePath) {
-        ArrayList<InvoiceHeader> invoices = new ArrayList<>();
+    public static ArrayList<HeaderTable> readFile(String invoicesFilePath,
+                                                  String itemsFilePath) {
+        ArrayList<HeaderTable> invoices = new ArrayList<>();
 
         BufferedReader reader = null;
         String line;
         try {
             reader = new BufferedReader(new FileReader(invoicesFilePath));
             while ((line = reader.readLine()) != null) {
-                InvoiceHeader invoice;
+                HeaderTable invoice;
                 String[] row = line.split(",");
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                 Date date = sdf.parse(row[1]);
-                invoice = new InvoiceHeader(Integer.parseInt(row[0]), date, row[2]);
-                ArrayList<InvoiceLines> invoiceItems = getItemsForInvoice(invoice, itemsFilePath);
+                invoice = new HeaderTable(Integer.parseInt(row[0]), date, row[2]);
+                ArrayList<LineTable> invoiceItems = getItemsForInvoice(invoice, itemsFilePath);
                 invoice.setInvoiceLines(invoiceItems);
                 invoices.add(invoice);
             }
@@ -110,7 +111,7 @@ public class ActionHandler implements ActionListener {
         return invoices;
     }
 
-    public static void writeFile(ArrayList<InvoiceHeader> invoices) {
+    public static void writeFile(ArrayList<HeaderTable> invoices) {
 
         String invoiceHeaderFilePath = "resources\\Invoices.csv";
         String invoiceLineFilePath = "resources\\InvoiceItems.csv";
@@ -122,21 +123,23 @@ public class ActionHandler implements ActionListener {
             headerWriter = getFileWriter(invoiceHeaderFilePath);
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-            for (InvoiceHeader invoice : invoices) {
+            for (HeaderTable invoice : invoices) {
                 String formattedDate = sdf.format(invoice.getInvoiceDate());
-                headerWriter.println(invoice.getInvoiceNum() + "," + formattedDate + "," + invoice.getCustomerName());
+                headerWriter.println(invoice.getInvoiceNum() + "," + formattedDate
+                        + "," + invoice.getCustomerName());
             }
 
             headerWriter.flush();
 
             lineWriter = getFileWriter(invoiceLineFilePath);
-            ArrayList<InvoiceLines> invoiceItems;
+            ArrayList<LineTable> invoiceItems;
 
-            for (InvoiceHeader invoice : invoices) {
+            for (HeaderTable invoice : invoices) {
                 invoiceItems = invoice.getInvoiceLines();
-                for (InvoiceLines item : invoiceItems) {
+                for (LineTable item : invoiceItems) {
                     lineWriter.println(invoice.getInvoiceNum() + "," + item.getItemName() + ","
-                            + String.valueOf(item.getItemPrice()) + "," + String.valueOf(item.getCount()));
+                            + String.valueOf(item.getItemPrice()) + ","
+                            + String.valueOf(item.getCount()));
                 }
 
             }
@@ -152,7 +155,9 @@ public class ActionHandler implements ActionListener {
 
     }
 
-    public static void writeFile(ArrayList<InvoiceHeader> invoices, String invoicesFilePath, String itemsFilePath) {
+    public static void writeFile(ArrayList<HeaderTable> invoices,
+                                 String invoicesFilePath,
+                                 String itemsFilePath) {
 
         PrintWriter headerWriter = null;
         PrintWriter lineWriter = null;
@@ -162,21 +167,23 @@ public class ActionHandler implements ActionListener {
             headerWriter = getFileWriter(invoicesFilePath);
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-            for (InvoiceHeader invoice : invoices) {
+            for (HeaderTable invoice : invoices) {
                 String formattedDate = sdf.format(invoice.getInvoiceDate());
-                headerWriter.println(invoice.getInvoiceNum() + "," + formattedDate + "," + invoice.getCustomerName());
+                headerWriter.println(invoice.getInvoiceNum() + "," + formattedDate
+                        + "," + invoice.getCustomerName());
             }
 
             headerWriter.flush();
 
             lineWriter = getFileWriter(itemsFilePath);
-            ArrayList<InvoiceLines> invoiceItems;
+            ArrayList<LineTable> invoiceItems;
 
-            for (InvoiceHeader invoice : invoices) {
+            for (HeaderTable invoice : invoices) {
                 invoiceItems = invoice.getInvoiceLines();
-                for (InvoiceLines item : invoiceItems) {
+                for (LineTable item : invoiceItems) {
                     lineWriter.println(invoice.getInvoiceNum() + "," + item.getItemName() + ","
-                            + String.valueOf(item.getItemPrice()) + "," + String.valueOf(item.getCount()));
+                            + String.valueOf(item.getItemPrice()) + ","
+                            + String.valueOf(item.getCount()));
                 }
 
             }
@@ -193,8 +200,8 @@ public class ActionHandler implements ActionListener {
     }
 
     // Helper Method to organize the code in a good way ( Retrieve items for each invoice)
-    private static ArrayList<InvoiceLines> getItemsForInvoice(InvoiceHeader invoice, String filePath) {
-        ArrayList<InvoiceLines> invoiceItems = new ArrayList<>();
+    private static ArrayList<LineTable> getItemsForInvoice(HeaderTable invoice, String filePath) {
+        ArrayList<LineTable> invoiceItems = new ArrayList<>();
         BufferedReader reader = null;
         String line;
         try {
@@ -203,7 +210,7 @@ public class ActionHandler implements ActionListener {
                 String[] row = line.split(",");
                 int num = Integer.parseInt(row[0]);
                 if (num == invoice.getInvoiceNum()) {
-                    invoiceItems.add(new InvoiceLines(invoice, row[1],
+                    invoiceItems.add(new LineTable(invoice, row[1],
                             Double.parseDouble(row[2]), Integer.parseInt(row[3])));
                 }
 
@@ -255,22 +262,21 @@ public class ActionHandler implements ActionListener {
                 return;
             }
             System.out.println("Invoice's items CSV file is selected");
-            System.out.println("******************************************");
+            System.out.println("------------------------------------");
         }
 
         if (invoicesFilePath != null && itemsFilePath != null) {
-            InvoiceFrame.invoices = readFile(invoicesFilePath, itemsFilePath);
-            Object[][] table1Data = getInvoiceTableData(InvoiceFrame.invoices);
-            InvoiceFrame.invoicesTable.setModel(new DefaultTableModel(table1Data,
-                    new String[]{"No.", "Date", "Customer", "Total"}));
+            SigInvoiceFrame.invoices = readFile(invoicesFilePath, itemsFilePath);
+            Object[][] table1Data = getInvoiceTableData(SigInvoiceFrame.invoices);
+            SigInvoiceFrame.invoicesTable.setModel(new DefaultTableModel(table1Data,
+                    new String[]{"No.", "Date", "Customer Name", "Total"}));
 
-            for (InvoiceHeader invoice : InvoiceFrame.invoices) {
+            for (HeaderTable invoice : SigInvoiceFrame.invoices) {
                 System.out.println(invoice);
-                System.out.println("*********************************************");
+                System.out.println("--------------------------------");
             }
         } else {
-            System.out.println("You must select two CSV files");
-            System.out.println("*************************************************");
+            System.out.println("Please upload Header File then Line File with extension = .csv\n");
         }
 
     }
@@ -285,11 +291,11 @@ public class ActionHandler implements ActionListener {
             invoicesFilePath = fc1.getSelectedFile().getPath();
             boolean suffix = invoicesFilePath.endsWith("csv");
             if (!suffix) {
-                System.out.println("Files must be CSV file only");
+                System.out.println("Line and Header Files should be with CSV extension only");
                 return;
             }
-            System.out.println("Invoices File is selected");
-            System.out.println("******************************************");
+            System.out.println("The Two Invoices File is selected successfully");
+            System.out.println("----------------------------------------------");
         }
 
         JFileChooser fc2 = new JFileChooser();
@@ -301,63 +307,61 @@ public class ActionHandler implements ActionListener {
                 return;
             }
             System.out.println("Invoice's items file is selected");
-            System.out.println("******************************************");
+            System.out.println("------------------------------------");
         }
 
         if (invoicesFilePath != null && itemsFilePath != null) {
-            writeFile(InvoiceFrame.invoices, invoicesFilePath, itemsFilePath);
+            writeFile(SigInvoiceFrame.invoices, invoicesFilePath, itemsFilePath);
 
         } else {
-            System.out.println("You must select two files");
-            System.out.println("*************************************************");
+            System.out.println("You must select two files\n");
         }
     }
 
     private void createNewInvoice() {
 
-        invoiceDialog = new NewInvoiceDialog(null, true);
+        invoiceDialog = new AddNewInvoiceDialog(null, true);
         invoiceDialog.setVisible(true);
 
-        int invoiceNum = InvoiceFrame.invoices.size() + 1;
+        int invoiceNum = SigInvoiceFrame.invoices.size() + 1;
         String dateString = invoiceDialog.getInvoiceDate();
         String customerName = invoiceDialog.getCustomerName();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         try {
             if (dateString != null && !(customerName.isEmpty())) {
                 Date invoiceDate = df.parse(dateString);
-                InvoiceHeader invoice = new InvoiceHeader(invoiceNum, invoiceDate, customerName);
-                InvoiceFrame.invoices.add(invoice);
-                Object[][] invoiceTableData = getInvoiceTableData(InvoiceFrame.invoices);
-                InvoiceFrame.invoicesTable.setModel(new DefaultTableModel(invoiceTableData,
-                        new String[]{"No.", "Date", "Customer", "Total"}));
+                HeaderTable invoice = new HeaderTable(invoiceNum, invoiceDate, customerName);
+                SigInvoiceFrame.invoices.add(invoice);
+                Object[][] invoiceTableData = getInvoiceTableData(SigInvoiceFrame.invoices);
+                SigInvoiceFrame.invoicesTable.setModel(new DefaultTableModel(invoiceTableData,
+                        new String[]{"No.", "Date", "Customer Name", "Total"}));
             } else {
-                System.out.println("You must insert date and customer name");
+                System.out.println("Please, Enter the Both Fields: Date & Customer Name");
             }
 
         } catch (ParseException ex) {
-            System.out.println("Incorrecet Date Format ====> It need to be (dd-MM-yyyy) ");
-            System.out.println("***********************************************************");
+            System.out.println("Date Format is Wrong Please,Enter it in the Following Format: dd-MM-yyyy \n");
         }
 
     }
 
     private void deleteInvoice() {
-        if (InvoiceFrame.invoicesTable.getSelectedRow() >= 0)
+        if (SigInvoiceFrame.invoicesTable.getSelectedRow() >= 0)
         {
-            InvoiceFrame.invoices.remove(InvoiceFrame.invoicesTable.getSelectedRow());
+            SigInvoiceFrame.invoices.remove(SigInvoiceFrame.invoicesTable.getSelectedRow());
             //coder : for loop invoices (arralist) .size ->  new num
-            for(int i = 0 ; i < InvoiceFrame.invoices.size();i++)
+            for(int i = 0; i < SigInvoiceFrame.invoices.size(); i++)
             {
-                InvoiceFrame.invoices.get(i).setInvoiceNum(i+1);
+                SigInvoiceFrame.invoices.get(i).setInvoiceNum(i+1);
             }
-            Object[][] invoiceTableData = getInvoiceTableData(InvoiceFrame.invoices);
-            InvoiceFrame.invoicesTable.setModel(new DefaultTableModel(invoiceTableData,
-                    new String[]{"No.", "Date", "Customer", "Total"}));
-            InvoiceFrame.invoiceNumLbl.setText("0");
-            InvoiceFrame.invoiceDateTxtField.setText("");
-            InvoiceFrame.customerNameTxtField.setText("");
-            InvoiceFrame.invoiceTotalLbl.setText("0.0");
-            InvoiceFrame.itemsTable.setModel(new javax.swing.table.DefaultTableModel(
+            Object[][] invoiceTableData = getInvoiceTableData(SigInvoiceFrame.invoices);
+            SigInvoiceFrame.invoicesTable.setModel(new DefaultTableModel(invoiceTableData,
+                    new String[]{"No.", "Date", "Customer Name", "Total"}));
+            SigInvoiceFrame.invoiceNumLbl.setText("0");
+            SigInvoiceFrame.invoiceDateTxtField.setText("");
+            SigInvoiceFrame.customerNameTxtField.setText("");
+            SigInvoiceFrame.invoiceTotalLbl.setText("0.0");
+            SigInvoiceFrame.itemsTable.setModel(new javax.swing.table.DefaultTableModel(
                     new Object[][]{
                             {null, null, null, null, null},
                             {null, null, null, null, null},
@@ -370,14 +374,14 @@ public class ActionHandler implements ActionListener {
                     }
             ));
         } else {
-            System.out.println("Select Invoice First");
-            System.out.println("*****************************");
+            System.out.println("Select Invoice First from Header Table from Left  Side \n");
+
         }
     }
 
 
     // Helper Methods
-    private Object[][] getInvoiceTableData(ArrayList<InvoiceHeader> invoices) {
+    private Object[][] getInvoiceTableData(ArrayList<HeaderTable> invoices) {
 
         Object[][] tableData = new Object[invoices.size()][4];
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -388,7 +392,7 @@ public class ActionHandler implements ActionListener {
             tableData[i][2] = invoices.get(i).getCustomerName();
             double total = 0.0;
             if (invoices.get(i).getInvoiceLines() != null) {
-                for (InvoiceLines item : invoices.get(i).getInvoiceLines()) {
+                for (LineTable item : invoices.get(i).getInvoiceLines()) {
                     total += item.getItemPrice() * item.getCount();
                 }
             }
@@ -400,7 +404,7 @@ public class ActionHandler implements ActionListener {
         return tableData;
     }
 
-    private Object[][] getInvoiceItemsTableData(ArrayList<InvoiceLines> items) {
+    private Object[][] getInvoiceItemsTableData(ArrayList<LineTable> items) {
 
         Object[][] tableData = new Object[items.size()][5];
         for (int i = 0; i < items.size(); i++) {
