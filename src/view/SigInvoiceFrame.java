@@ -7,7 +7,7 @@ import model.HeaderTable;
 import java.util.ArrayList;
 
 public class SigInvoiceFrame extends javax.swing.JFrame {
-    private javax.swing.JButton cancelBtn;
+    private javax.swing.JButton deleteItemBtn;
     private javax.swing.JButton createInvoiceBtn;
     public static javax.swing.JTextField customerNameTxtField;
     private javax.swing.JButton deleteInvoiceBtn;
@@ -31,17 +31,17 @@ public class SigInvoiceFrame extends javax.swing.JFrame {
     public static javax.swing.JMenuItem loadFileMenuItem;
     private javax.swing.JButton saveBtn;
     public static javax.swing.JMenuItem saveFileMenuItem;
-
     public SigInvoiceFrame() {
 
         initComponents();
 
-        createInvoiceBtn.addActionListener(actionHandler);
-        deleteInvoiceBtn.addActionListener(actionHandler);
-        saveBtn.addActionListener(actionHandler);
-        cancelBtn.addActionListener(actionHandler);
-        loadFileMenuItem.addActionListener(actionHandler);
-        saveFileMenuItem.addActionListener(actionHandler);
+        createInvoiceBtn.addActionListener(ButtonAction);
+        deleteInvoiceBtn.addActionListener(ButtonAction);
+        deleteInvoiceBtn.addActionListener(ButtonAction);
+        saveBtn.addActionListener(ButtonAction);
+        deleteItemBtn.addActionListener(ButtonAction);
+        loadFileMenuItem.addActionListener(ButtonAction);
+        saveFileMenuItem.addActionListener(ButtonAction);
         invoicesTable.addMouseListener(mouseHandler);
         setLocation(200, 100);
 
@@ -71,7 +71,7 @@ public class SigInvoiceFrame extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         itemsTable = new javax.swing.JTable();
         saveBtn = new javax.swing.JButton();
-        cancelBtn = new javax.swing.JButton();
+        deleteItemBtn = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         loadFileMenuItem = new javax.swing.JMenuItem();
@@ -87,14 +87,14 @@ public class SigInvoiceFrame extends javax.swing.JFrame {
 
         invoicesTable.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         invoicesTable.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{
+                new Object [][] {
 
                 },
-                new String[]{
-                        "No.", "Invoice Date", "Customer Name", "Total"
+                new String [] {
+                        "No.", "Date", "Customer", "Total"
                 }
         ));
-        invoicesTable.setName("");
+        invoicesTable.setName(""); // NOI18N
         invoicesTable.setShowGrid(true);
         jScrollPane1.setViewportView(invoicesTable);
 
@@ -162,23 +162,23 @@ public class SigInvoiceFrame extends javax.swing.JFrame {
         invoiceTotalLbl.setText("0.0");
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel8.setText("Invoice's Items");
+        jLabel8.setText("Invoice's Items Table");
 
         itemsTable.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         itemsTable.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{
+                new Object [][] {
 
                 },
-                new String[]{
+                new String [] {
                         "No.", "Item Name", "Item Price", "Count", "Item Total"
                 }
         ));
         itemsTable.setShowGrid(true);
         jScrollPane2.setViewportView(itemsTable);
 
-        saveBtn.setText("Save");
+        saveBtn.setText("Add item");
 
-        cancelBtn.setText("Cancel");
+        deleteItemBtn.setText("Delete item");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -206,7 +206,7 @@ public class SigInvoiceFrame extends javax.swing.JFrame {
                                 .addGap(73, 73, 73)
                                 .addComponent(saveBtn)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(cancelBtn)
+                                .addComponent(deleteItemBtn)
                                 .addGap(66, 66, 66))
         );
         jPanel2Layout.setVerticalGroup(
@@ -235,7 +235,7 @@ public class SigInvoiceFrame extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(saveBtn)
-                                        .addComponent(cancelBtn))
+                                        .addComponent(deleteItemBtn))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -310,8 +310,9 @@ public class SigInvoiceFrame extends javax.swing.JFrame {
     }
 
     public static ArrayList<HeaderTable> invoices = new ArrayList<>();
-    controller.ButtonAction actionHandler = new ButtonAction();
+    controller.ButtonAction ButtonAction = new ButtonAction();
     MouseAction mouseHandler = new MouseAction();
+
 
 
 }

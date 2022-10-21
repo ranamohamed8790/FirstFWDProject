@@ -26,13 +26,13 @@ public class MouseAction extends MouseAdapter {
                 SigInvoiceFrame.invoiceDateTxtField.setText(sdf.format(invoice.getInvoiceDate()));
                 SigInvoiceFrame.customerNameTxtField.setText(invoice.getCustomerName());
                 double total = 0.0;
-                if (invoice.getInvoiceLines() != null) {
-                    for (LineTable item : invoice.getInvoiceLines()) {
+                if (invoice.getLineTable() != null) {
+                    for (LineTable item : invoice.getLineTable()) {
                         total += item.getItemPrice() * item.getCount();
                     }
 
                     SigInvoiceFrame.invoiceTotalLbl.setText(String.valueOf(total));
-                    invoiceItems = invoice.getInvoiceLines();
+                    invoiceItems = invoice.getLineTable();
                     Object[][] table2Data = getInvoiceItemsTableData(invoiceItems);
                     SigInvoiceFrame.itemsTable.setModel(new DefaultTableModel(table2Data,
                             new String[]{"No.", "Item Name", "Item Price", "Count", "Item Total"}));

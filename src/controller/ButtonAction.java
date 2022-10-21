@@ -2,6 +2,7 @@ package controller;
 
 import model.HeaderTable;
 import model.LineTable;
+import view.AddNewItemDialog;
 import view.SigInvoiceFrame;
 import view.AddNewInvoiceDialog;
 import javax.swing.*;
@@ -18,6 +19,8 @@ public class ButtonAction implements ActionListener {
 
     // == Fields ==
     AddNewInvoiceDialog invoiceDialog;
+    AddNewItemDialog itemDialog;
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -35,18 +38,23 @@ public class ButtonAction implements ActionListener {
             case "Delete Invoice":
                 deleteInvoice();
                 break;
+            case "Add item":
+                saveItem();
+                break;
+            case "Delete item":
+                deleteItem();
+                break;
         }
 
     }
-
     public static ArrayList<HeaderTable> readFile() {
         ArrayList<HeaderTable> invoices = new ArrayList<>();
-        String invoiceHeaderFilePath = "resources\\HeaderTable.csv";
+        String HeaderTableFilePath = "resources\\HeaderTable.csv";
         String invoiceLineFilePath = "resources\\InvoiceLine.csv";
         BufferedReader reader = null;
         String line;
         try {
-            reader = new BufferedReader(new FileReader(invoiceHeaderFilePath));
+            reader = new BufferedReader(new FileReader(HeaderTableFilePath));
             while ((line = reader.readLine()) != null) {
                 HeaderTable invoice;
                 String[] row = line.split(",");
@@ -54,7 +62,7 @@ public class ButtonAction implements ActionListener {
                 Date date = sdf.parse(row[1]);
                 invoice = new HeaderTable(Integer.parseInt(row[0]), date, row[2]);
                 ArrayList<LineTable> invoiceItems = getItemsForInvoice(invoice, invoiceLineFilePath);
-                invoice.setInvoiceLines(invoiceItems);
+                invoice.setLineTable(invoiceItems);
                 invoices.add(invoice);
             }
         } catch (FileNotFoundException ex) {
@@ -75,8 +83,7 @@ public class ButtonAction implements ActionListener {
         return invoices;
     }
 
-    public static ArrayList<HeaderTable> readFile(String invoicesFilePath,
-                                                  String itemsFilePath) {
+    public static ArrayList<HeaderTable> readFile(String invoicesFilePath, String itemsFilePath) {
         ArrayList<HeaderTable> invoices = new ArrayList<>();
 
         BufferedReader reader = null;
@@ -90,7 +97,7 @@ public class ButtonAction implements ActionListener {
                 Date date = sdf.parse(row[1]);
                 invoice = new HeaderTable(Integer.parseInt(row[0]), date, row[2]);
                 ArrayList<LineTable> invoiceItems = getItemsForInvoice(invoice, itemsFilePath);
-                invoice.setInvoiceLines(invoiceItems);
+                invoice.setLineTable(invoiceItems);
                 invoices.add(invoice);
             }
         } catch (FileNotFoundException ex) {
@@ -113,20 +120,19 @@ public class ButtonAction implements ActionListener {
 
     public static void writeFile(ArrayList<HeaderTable> invoices) {
 
-        String invoiceHeaderFilePath = "resources\\Invoices.csv";
+        String HeaderTableFilePath = "resources\\Invoices.csv";
         String invoiceLineFilePath = "resources\\InvoiceItems.csv";
         PrintWriter headerWriter = null;
         PrintWriter lineWriter = null;
 
         try {
 
-            headerWriter = getFileWriter(invoiceHeaderFilePath);
+            headerWriter = getFileWriter(HeaderTableFilePath);
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
             for (HeaderTable invoice : invoices) {
                 String formattedDate = sdf.format(invoice.getInvoiceDate());
-                headerWriter.println(invoice.getInvoiceNum() + "," + formattedDate
-                        + "," + invoice.getCustomerName());
+                headerWriter.println(invoice.getInvoiceNum() + "," + formattedDate + "," + invoice.getCustomerName());
             }
 
             headerWriter.flush();
@@ -135,11 +141,10 @@ public class ButtonAction implements ActionListener {
             ArrayList<LineTable> invoiceItems;
 
             for (HeaderTable invoice : invoices) {
-                invoiceItems = invoice.getInvoiceLines();
+                invoiceItems = invoice.getLineTable();
                 for (LineTable item : invoiceItems) {
                     lineWriter.println(invoice.getInvoiceNum() + "," + item.getItemName() + ","
-                            + String.valueOf(item.getItemPrice()) + ","
-                            + String.valueOf(item.getCount()));
+                            + String.valueOf(item.getItemPrice()) + "," + String.valueOf(item.getCount()));
                 }
 
             }
@@ -155,9 +160,7 @@ public class ButtonAction implements ActionListener {
 
     }
 
-    public static void writeFile(ArrayList<HeaderTable> invoices,
-                                 String invoicesFilePath,
-                                 String itemsFilePath) {
+    public static void writeFile(ArrayList<HeaderTable> invoices, String invoicesFilePath, String itemsFilePath) {
 
         PrintWriter headerWriter = null;
         PrintWriter lineWriter = null;
@@ -169,8 +172,7 @@ public class ButtonAction implements ActionListener {
 
             for (HeaderTable invoice : invoices) {
                 String formattedDate = sdf.format(invoice.getInvoiceDate());
-                headerWriter.println(invoice.getInvoiceNum() + "," + formattedDate
-                        + "," + invoice.getCustomerName());
+                headerWriter.println(invoice.getInvoiceNum() + "," + formattedDate + "," + invoice.getCustomerName());
             }
 
             headerWriter.flush();
@@ -179,11 +181,10 @@ public class ButtonAction implements ActionListener {
             ArrayList<LineTable> invoiceItems;
 
             for (HeaderTable invoice : invoices) {
-                invoiceItems = invoice.getInvoiceLines();
+                invoiceItems = invoice.getLineTable();
                 for (LineTable item : invoiceItems) {
                     lineWriter.println(invoice.getInvoiceNum() + "," + item.getItemName() + ","
-                            + String.valueOf(item.getItemPrice()) + ","
-                            + String.valueOf(item.getCount()));
+                            + String.valueOf(item.getItemPrice()) + "," + String.valueOf(item.getCount()));
                 }
 
             }
@@ -236,6 +237,7 @@ public class ButtonAction implements ActionListener {
 
         return new PrintWriter(new BufferedWriter(new FileWriter(filePath)));
     }
+
     private void loadFile() {
 
         String invoicesFilePath = null;
@@ -246,11 +248,11 @@ public class ButtonAction implements ActionListener {
             invoicesFilePath = fc1.getSelectedFile().getPath();
             boolean suffix = invoicesFilePath.endsWith("csv");
             if (!suffix) {
-                System.out.println("Files must be CSV file only");
+                System.out.println("Please, Enter invoice Files with CSV Extension");
                 return;
             }
-            System.out.println("Invoices CSV File is selected");
-            System.out.println("******************************************");
+            System.out.println("Invoices CSV File is selected successfully");
+            System.out.println("--------------------------------------");
         }
 
         JFileChooser fc2 = new JFileChooser();
@@ -258,25 +260,26 @@ public class ButtonAction implements ActionListener {
             itemsFilePath = fc2.getSelectedFile().getPath();
             boolean suffix = itemsFilePath.endsWith("csv");
             if (!suffix) {
-                System.out.println("Files must be CSV file only");
+                System.out.println("Please, Enter invoice File with CSV Extension");
                 return;
             }
-            System.out.println("Invoice's items CSV file is selected");
-            System.out.println("------------------------------------");
+            System.out.println("Invoice's items CSV file is selected successfully");
+            System.out.println("--------------------------------------");
         }
 
         if (invoicesFilePath != null && itemsFilePath != null) {
             SigInvoiceFrame.invoices = readFile(invoicesFilePath, itemsFilePath);
             Object[][] table1Data = getInvoiceTableData(SigInvoiceFrame.invoices);
             SigInvoiceFrame.invoicesTable.setModel(new DefaultTableModel(table1Data,
-                    new String[]{"No.", "Date", "Customer Name", "Total"}));
+                    new String[]{"No.", "Date", "Customer", "Total"}));
 
             for (HeaderTable invoice : SigInvoiceFrame.invoices) {
                 System.out.println(invoice);
-                System.out.println("--------------------------------");
+                System.out.println("--------------------------------------");
             }
         } else {
-            System.out.println("Please upload Header File then Line File with extension = .csv\n");
+            System.out.println("You should select two CSV files");
+            System.out.println("--------------------------------------");
         }
 
     }
@@ -291,11 +294,11 @@ public class ButtonAction implements ActionListener {
             invoicesFilePath = fc1.getSelectedFile().getPath();
             boolean suffix = invoicesFilePath.endsWith("csv");
             if (!suffix) {
-                System.out.println("Line and Header Files should be with CSV extension only");
+                System.out.println("Files must be CSV file only");
                 return;
             }
-            System.out.println("The Two Invoices File is selected successfully");
-            System.out.println("----------------------------------------------");
+            System.out.println("Invoices File is selected successfully");
+            System.out.println("--------------------------------------");
         }
 
         JFileChooser fc2 = new JFileChooser();
@@ -307,14 +310,15 @@ public class ButtonAction implements ActionListener {
                 return;
             }
             System.out.println("Invoice's items file is selected");
-            System.out.println("------------------------------------");
+            System.out.println("******************************************");
         }
 
         if (invoicesFilePath != null && itemsFilePath != null) {
             writeFile(SigInvoiceFrame.invoices, invoicesFilePath, itemsFilePath);
 
         } else {
-            System.out.println("You must select two files\n");
+            System.out.println("You must select two files");
+            System.out.println("*************************************************");
         }
     }
 
@@ -334,13 +338,14 @@ public class ButtonAction implements ActionListener {
                 SigInvoiceFrame.invoices.add(invoice);
                 Object[][] invoiceTableData = getInvoiceTableData(SigInvoiceFrame.invoices);
                 SigInvoiceFrame.invoicesTable.setModel(new DefaultTableModel(invoiceTableData,
-                        new String[]{"No.", "Date", "Customer Name", "Total"}));
+                        new String[]{"No.", "Date", "Customer", "Total"}));
             } else {
-                System.out.println("Please, Enter the Both Fields: Date & Customer Name");
+                System.out.println("You must insert date and customer name");
             }
 
         } catch (ParseException ex) {
-            System.out.println("Date Format is Wrong Please,Enter it in the Following Format: dd-MM-yyyy \n");
+            System.out.println("Incorrecet Date Format ====> It need to be (dd-MM-yyyy) ");
+            System.out.println("***********************************************************");
         }
 
     }
@@ -350,13 +355,13 @@ public class ButtonAction implements ActionListener {
         {
             SigInvoiceFrame.invoices.remove(SigInvoiceFrame.invoicesTable.getSelectedRow());
             //coder : for loop invoices (arralist) .size ->  new num
-            for(int i = 0; i < SigInvoiceFrame.invoices.size(); i++)
+            for(int i = 0 ; i < SigInvoiceFrame.invoices.size();i++)
             {
                 SigInvoiceFrame.invoices.get(i).setInvoiceNum(i+1);
             }
             Object[][] invoiceTableData = getInvoiceTableData(SigInvoiceFrame.invoices);
             SigInvoiceFrame.invoicesTable.setModel(new DefaultTableModel(invoiceTableData,
-                    new String[]{"No.", "Date", "Customer Name", "Total"}));
+                    new String[]{"No.", "Date", "Customer", "Total"}));
             SigInvoiceFrame.invoiceNumLbl.setText("0");
             SigInvoiceFrame.invoiceDateTxtField.setText("");
             SigInvoiceFrame.customerNameTxtField.setText("");
@@ -374,8 +379,88 @@ public class ButtonAction implements ActionListener {
                     }
             ));
         } else {
-            System.out.println("Select Invoice First from Header Table from Left  Side \n");
+            System.out.println("Select Invoice First");
+            System.out.println("*****************************");
+        }
+    }
 
+    private void saveItem() {
+
+        itemDialog = new AddNewItemDialog(null, true);
+        itemDialog.setVisible(true);
+
+        int selectedRow = SigInvoiceFrame.invoicesTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            HeaderTable invoice = SigInvoiceFrame.invoices.get(selectedRow);
+            ArrayList<LineTable> invoiceItems = invoice.getLineTable();
+            if (invoiceItems == null) {
+                invoiceItems = new ArrayList<>();
+                invoice.setLineTable(invoiceItems);
+            }
+            LineTable item = new LineTable(invoice, itemDialog.getItemName(),
+                    itemDialog.getItemPrice(), itemDialog.getCount());
+            if (!((itemDialog.getName()).isEmpty()) && itemDialog.getItemPrice() > 0.0 && itemDialog.getCount() > 0) {
+                invoiceItems.add(item);
+            }
+
+            double total = 0.0;
+            for (LineTable invoiceItem : invoiceItems) {
+                total += invoiceItem.getItemPrice() * invoiceItem.getCount();
+            }
+
+            SigInvoiceFrame.invoiceTotalLbl.setText(String.valueOf(total));
+
+            Object[][] table2Data = getInvoiceItemsTableData(invoiceItems);
+            SigInvoiceFrame.itemsTable.setModel(new DefaultTableModel(table2Data,
+                    new String[]{"No.", "Item Name", "Item Price", "Count", "Item Total"}));
+
+            Object[][] table1Data = getInvoiceTableData(SigInvoiceFrame.invoices);
+            SigInvoiceFrame.invoicesTable.setModel(new DefaultTableModel(table1Data,
+                    new String[]{"No.", "Date", "Customer", "Total"}));
+        } else {
+            System.out.println("Please, Select Invoice First");
+            System.out.println("------------------------------------------");
+        }
+    }
+
+    private void deleteItem() {
+        int selectedRowInInvoiceTable = SigInvoiceFrame.invoicesTable.getSelectedRow();
+        if (selectedRowInInvoiceTable >= 0) {
+
+            HeaderTable invoice = SigInvoiceFrame.invoices.get(selectedRowInInvoiceTable);
+            ArrayList<LineTable> items = invoice.getLineTable();
+            if (items == null) {
+                items = new ArrayList<>();
+                invoice.setLineTable(items);
+            }
+            int selectedRowInItemsTable = SigInvoiceFrame.itemsTable.getSelectedRow();
+            if (selectedRowInItemsTable >= 0) {
+                items.remove(selectedRowInItemsTable);
+                double total = 0.0;
+                for (LineTable invoiceItem : items) {
+                    total += invoiceItem.getItemPrice() * invoiceItem.getCount();
+                }
+
+                SigInvoiceFrame.invoiceTotalLbl.setText(String.valueOf(total));
+
+                Object[][] table2Data = getInvoiceItemsTableData(items);
+                SigInvoiceFrame.itemsTable.setModel(new DefaultTableModel(table2Data,
+                        new String[]{"No.", "Item Name", "Item Price", "Count", "Item Total"}));
+
+                Object[][] table1Data = getInvoiceTableData(SigInvoiceFrame.invoices);
+                SigInvoiceFrame.invoicesTable.setModel(new DefaultTableModel(table1Data,
+                        new String[]{"No.", "Date", "Customer", "Total"}));
+
+                System.out.println("The Item is Deleted Successfully");
+                System.out.println("---------------------------------------");
+
+            } else {
+                System.out.println("Please, Select Invoice and Item in the same time");
+                System.out.println("------------------------------------------------");
+            }
+        } else {
+            System.out.println("PLease, Select Invoice and Item in the same time");
+            System.out.println("--------------------------------------------------");
         }
     }
 
@@ -391,8 +476,8 @@ public class ButtonAction implements ActionListener {
             tableData[i][1] = sdf.format(invoices.get(i).getInvoiceDate());
             tableData[i][2] = invoices.get(i).getCustomerName();
             double total = 0.0;
-            if (invoices.get(i).getInvoiceLines() != null) {
-                for (LineTable item : invoices.get(i).getInvoiceLines()) {
+            if (invoices.get(i).getLineTable() != null) {
+                for (LineTable item : invoices.get(i).getLineTable()) {
                     total += item.getItemPrice() * item.getCount();
                 }
             }
